@@ -8,6 +8,7 @@ import android.util.Log;
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.config.Configuration;
 import com.birbit.android.jobqueue.log.CustomLogger;
+import com.jiahaoliuliu.priorityqueuesample.job.BlockingJob;
 import com.jiahaoliuliu.priorityqueuesample.job.PostTweetJob;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,8 +26,14 @@ public class MainActivity extends AppCompatActivity {
         mContext = this;
 
         jobManager = new JobManager(configureJobManager());
-        PostTweetJob postTweetJob = new PostTweetJob("Tweet this!");
-        jobManager.addJobInBackground(postTweetJob);
+        jobManager.addJobInBackground(new BlockingJob("1"));
+        jobManager.addJobInBackground(new PostTweetJob("Tweet this! 1"));
+
+        jobManager.addJobInBackground(new BlockingJob("2"));
+        jobManager.addJobInBackground(new PostTweetJob("Tweet this! 2"));
+
+        jobManager.addJobInBackground(new BlockingJob("3"));
+        jobManager.addJobInBackground(new PostTweetJob("Tweet this! 3"));
     }
 
     private Configuration configureJobManager() {
@@ -57,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.v(JOB_MANAGER_TAG, String.format(text, args));
                     }
                 })
-                .minConsumerCount(1)//always keep at least one consumer alive
-                .maxConsumerCount(3)//up to 2 consumers at a time
+                .minConsumerCount(2)//always keep at least one consumer alive
+                .maxConsumerCount(4)//up to 3 consumers at a time
                 .loadFactor(3)//3 jobs per consumer
                 .consumerKeepAlive(120)//wait 2 minute.
                 .build();

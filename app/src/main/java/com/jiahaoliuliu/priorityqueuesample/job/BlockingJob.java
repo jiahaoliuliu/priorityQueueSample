@@ -12,29 +12,32 @@ import com.birbit.android.jobqueue.RetryConstraint;
  * Created by jiahaoliu on 3/8/17.
  */
 
-public class PostTweetJob extends Job {
+public class BlockingJob extends Job {
 
-    private static final String TAG = "PostTweetJob";
-    private static final String GROUP_ID = "PostTweetGroup";
+    private static final String TAG = "BlockingJob";
+    private static final String GROUP_ID = "BlockingGroup";
 
     public static final int PRIORITY = 1;
-    private String text;
+    private String id;
 
-    public PostTweetJob(String text) {
+    public BlockingJob(String id) {
         super(new Params(PRIORITY).requireNetwork().persist().setGroupId(GROUP_ID));
-        this.text = text;
+        this.id = id;
     }
 
     @Override
     public void onAdded() {
         // Job has been saved  to disk
-        Log.v(TAG, "Job added " + text);
+        Log.v(TAG, "Job added " + id);
     }
 
     @Override
     public void onRun() throws Throwable {
         // Running the thread
-        Log.v(TAG, "Trying to post the text to twitter " + text);
+        Log.v(TAG, "Blocking the thread ... " + id);
+        // Sleep for 5 seconds
+        Thread.sleep(20*1000);
+        Log.v(TAG, "Releasing the block " + id);
     }
 
     @Override
